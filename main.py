@@ -7,7 +7,7 @@ import serial.tools.list_ports as list_ports
 HOST = '127.0.0.1'
 PORT = 5550
 # USB_PORT = '/dev/cu.usbmodem214101'
-canusb4s = []
+# canusb4s = []
 
 
 async def main():
@@ -21,11 +21,11 @@ async def main():
         print(f"Found {str(port[0])}")
         if port_name.upper() == '04D8:F80C':
             print(f'Found USB4 {str(port[0])}')
-            USB_PORT = str(port[0])
-            canusb4 = CanUsb4(USB_PORT, HOST, PORT)
+            usb_port = str(port[0])
+            canusb4 = CanUsb4(usb_port, HOST, PORT)
 
-    asyncio.create_task(canusb4.messages_from_usb())
-    asyncio.create_task(canusb4.messages_from_server())
+            asyncio.create_task(canusb4.messages_from_usb())
+            asyncio.create_task(canusb4.messages_from_server())
 
     while True:
         await asyncio.sleep(1)
