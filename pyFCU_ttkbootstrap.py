@@ -93,7 +93,7 @@ class Footer(ttk.Frame):
 
 if __name__ == '__main__':
     app = ttk.Window("TTKBootstrap FCU Demo")
-    size = (800, 600)
+    size = (1000, 800)
     app.geometry(f'{size[0]}x{size[1]}')
     app.minsize(*size)
     TtkFcu(app)
