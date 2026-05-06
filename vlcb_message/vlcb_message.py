@@ -72,7 +72,7 @@ def replacer(s, newstring, index, length, nofail=False):
 
 def message_to_json(msg):
     if opcode(msg) not in opcodes_toml:
-        print(f'opcode {opcode(msg)} not supported')
+        print(f'CBUS Error op_code {opcode(msg)} not supported')
     else:
         output = {}
         for field, values in opcodes_toml[opcode(msg)].items():
@@ -89,7 +89,7 @@ def message_to_json(msg):
                 output[field] = values[1]
             else:
                 print(f"{field} Invalid Type : {values[0]}")
-        print(f"Grid to JSON TOML : {output}")
+        # print(f"Grid to JSON TOML : {output}")
         return (output)
 
 
@@ -101,8 +101,8 @@ def json_to_message(json_msg):
     try:
         opcode_details = opcodes_toml[json_msg["op_code"]]
     except Exception as e:
-        print(f'Exception : {e}')
-        return
+        # print(f'Exception : {e}')
+        return f'Exception : {e}'
     else:
         # opcode_details = opcodes_toml[json_msg["op_code"]]
         # Find the length on the message and check all required fields exist

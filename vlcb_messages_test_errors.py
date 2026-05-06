@@ -14,19 +14,19 @@ def main(name: str) -> None:
     cbus_header = ':SB060N'
 
     vlcb_msg = cbus_header + '95012C0009'
-    print(f'Invalid Op Code - {vlcb_msg} {message_to_json(vlcb_msg)}')
+    print(f'TEST Invalid Op Code - {vlcb_msg} :: {message_to_json(vlcb_msg)}')
     print()
     vlcb_msg = cbus_header + '90012CA5'
-    print(f'Invalid Length - {message_to_json(vlcb_msg)}')
+    print(f'TEST Invalid Length - {vlcb_msg} :: {message_to_json(vlcb_msg)}')
     print()
     json_msg = {'opcode': '91', 'node_number': 300, 'event_number': 15}
-    print(f'Invalid JSON  - {json_to_message(json_msg)}')
+    print(f'TEST Invalid JSON  - {json_msg} :: {json_to_message(json_msg)}')
     print()
     json_msg = {'op_code': '91', 'node_number': 300, 'eventnumber': 15}
-    print(f'Missing JSON Field   - {json_to_message(json_msg)}')
+    print(f'TEST Missing JSON Field  - {json_msg} :: {json_to_message(json_msg)}')
     print()
 
 
 if __name__ == '__main__':
-    main('network Client')
+    main('Message Test')
 
