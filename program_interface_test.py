@@ -1,8 +1,8 @@
 from vlcb_server.network_client import VlcbClient
 
-from vlcb_server.vlcb_message import message_to_json
-from vlcb_server.vlcb_message import json_to_message
-from vlcb_server.vlcb_message import flags, opcode
+from vlcb_message.vlcb_message import message_to_json
+from vlcb_message.vlcb_message import json_to_message
+from vlcb_message.vlcb_message import flags
 
 import asyncio
 

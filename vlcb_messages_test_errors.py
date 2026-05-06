@@ -1,6 +1,6 @@
 
-from vlcb_server.vlcb_message import message_to_json
-from vlcb_server.vlcb_message import json_to_message
+from vlcb_message import message_to_json
+from vlcb_message import json_to_message
 
 
 
@@ -13,7 +13,7 @@ from vlcb_server.vlcb_message import json_to_message
 def main(name: str) -> None:
     cbus_header = ':SB060N'
 
-    vlcb_msg = cbus_header + '98012C0009'
+    vlcb_msg = cbus_header + '95012C0009'
     print(f'Invalid Op Code - {vlcb_msg} {message_to_json(vlcb_msg)}')
     print()
     vlcb_msg = cbus_header + '90012CA5'

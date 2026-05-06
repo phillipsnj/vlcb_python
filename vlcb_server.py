@@ -1,7 +1,6 @@
-from vlcb_server.server import VLCBServer
-from vlcb_server.canusb4 import CanUsb4
+from vlcb_server import VLCBServer
+from vlcb_server import CanUsb4
 import asyncio
-import time
 import serial.tools.list_ports as list_ports
 
 HOST = '127.0.0.1'

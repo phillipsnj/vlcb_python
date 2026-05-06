@@ -1,5 +1,7 @@
 from vlcb_server.network_threaded_client import VlcbClient
 
+from vlcb_message.vlcb_message import message_to_json
+
 import ttkbootstrap as tb
 from ttkbootstrap.scrolled import ScrolledText
 from ttkbootstrap.constants import *
@@ -11,11 +13,12 @@ class DemoApp(tb.Frame):
         self.pack(fill=BOTH, expand=YES)
 
         cbus_header = ':SB060N'
+        self.event_state = {}
         self.stop_ouput = tb.BooleanVar()
         self.stop_ouput.set(False)
 
         self.scroll_cf = ScrolledText(self)
-        self.scroll_cf.pack(side=BOTTOM, fill=X)
+        self.scroll_cf.pack(expand=True , fill=BOTH)
 
         self.scroll_cf.insert(END, 'first line')
 
@@ -38,12 +41,17 @@ class DemoApp(tb.Frame):
         self.VLCB_client.start()
 
     def process_message(self, msg):
+        message = message_to_json(msg)
         if self.stop_ouput.get() == False:
-            print(f'Message : {msg}')
-            self.scroll_cf.insert(END, f'new message {msg}\n')
+            print(f'Message : {msg} {message}')
+            self.scroll_cf.insert(END, f'new message {msg} {message_to_json(msg)}\n')
             self.scroll_cf.see(END)
         else:
             print("Don't insert message")
+        if message['op_code'] in {'90', '91', '98', '99'}:
+            print(f'Event to be stored in State {msg}')
+            self.event_state[message['event_identifier']] = message
+            print(f'Event State {self.event_state}')
 
     def insert_rows(self):
             print('insert row')
@@ -57,10 +65,10 @@ class DemoApp(tb.Frame):
     def toggle_scrolling(self):
         if self.stop_ouput.get() == True:
             self.stop_ouput.set(False)
-            self.b2.config(text='Freeze', bootstyle=DANGER)
+            self.b2.config(text='Freeze', bootstyle="success-outline")
         else:
             self.stop_ouput.set(True)
-            self.b2.config(text='Unfreeze', bootstyle=SUCCESS)
+            self.b2.config(text='Freeze', bootstyle="danger-outline")
 
 
 if __name__ == '__main__':
