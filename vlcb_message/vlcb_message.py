@@ -33,6 +33,9 @@ def checkbit(number, bit):
     check_number = 1 << bit
     return number & check_number == check_number
 
+def set_bit(number, bit):
+    return number | (1 << bit)
+
 
 def flags(flags):
     """
@@ -51,8 +54,14 @@ def flags(flags):
     output['vlcb'] = checkbit(flags, 6)
     return output
 
-def process_bit_array(bit_array, value):
-    pass
+def get_bit_array(msg, start, length, data):
+    flags = get_int(msg, start, length)
+    # print(f'bit-array -- {msg} {flags} {start} {length} {data}')
+    output = {}
+    for index, bit_field in enumerate(data):
+        # print(f'bit_field: {index} :: {bit_field} : {checkbit(flags, index)}')
+        output[bit_field] = checkbit(flags, index)
+    return output
 
 def replacer(s, newstring, index, length, nofail=False):
     # print(f'Replacing {index} with {newstring} in {s} {range(len(s))}')
@@ -83,6 +92,10 @@ def message_to_json(msg):
             elif values[0] == 'int':
                 output[field] = get_int(msg, values[1], values[2])
                 # print(f"{field} {get_int(msg, values['start'], values['length'])}")
+            elif values[0] == 'bit-array':
+                bit_array = get_bit_array(msg, values[1], values[2], values[3])
+                # print(f'bit_array: {bit_array}')
+                output[field] = bit_array
             elif values[0] == 'str-out':
                 output[field] = get_str(msg, values[1], values[2])
             elif values[0] == 'str-json':
@@ -122,23 +135,33 @@ def json_to_message(json_msg):
         # print(f"Initial Message : {vlcb_frame}")
         for field, values in json_msg.items():
             field_details = opcode_details[field]
-            # print(f'Field : {field} : {values} -- {field_details}')
+            # print(f'Field Details : {field} : {values} -- {field_details}')
             type = field_details[0]
-            if type in ['str', 'int']:
+            if type in ['str', 'int', 'bit-array']:
                 start = int(field_details[1])
                 length = int(field_details[2])
                 if type == 'str':
                     vlcb_frame = replacer(vlcb_frame, json_msg[field], start, length)
                 elif type == 'int':
                     vlcb_frame = replacer(vlcb_frame, pad(json_msg[field], length) , start, length)
+                else:
+                    flag_value = 0
+                    print(f'bit_array {field} {values} -- {field_details}')
+                    for key, value in enumerate(field_details[3]):
+                        print(f'bit_array_value :: {key} : {value} {values[value]}')
+                        if values[value]:
+                            print(f'True Value')
+                            flag_value = set_bit(flag_value, key)
+                            vlcb_frame = replacer(vlcb_frame, pad(flag_value, length), start, length)
+                    print(f'True Value : {pad(flag_value, length)}')
             elif type in ('str-out', 'str-json'):
                 # print(f'Field not required : {field} : {values} -- {field_details}')
                 pass
             else:
                 print(f'JSON ERROR:{field} : {values} {field_details}')
-        print(f'output JSON to Grid: {vlcb_frame}')
+        # print(f'output JSON to Grid: {vlcb_frame}')
         # display_opcode_details(op_code)
-    return vlcb_frame
+    return vlcb_frame+';'
 
 def display_opcode_details(op_code):
     print(f'Required Fields for op_code: {op_code}')
