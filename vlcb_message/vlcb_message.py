@@ -80,10 +80,14 @@ def replacer(s, newstring, index, length, nofail=False):
 
 
 def message_to_json(msg):
+    output = {}
     if opcode(msg) not in opcodes_toml:
         print(f'CBUS Error op_code {opcode(msg)} not supported')
+        output['status'] = 'ERROR'
+        output['op_code'] = opcode(msg)
+        output['description'] = f'CBUS Error op_code {opcode(msg)} not supported'
     else:
-        output = {}
+        output['status'] = 'OK'
         for field, values in opcodes_toml[opcode(msg)].items():
             # print(f"opcode: {field}, values: {values}")
             if values[0] == ('str'):
@@ -103,7 +107,7 @@ def message_to_json(msg):
             else:
                 print(f"{field} Invalid Type : {values[0]}")
         # print(f"Grid to JSON TOML : {output}")
-        return (output)
+    return (output)
 
 
 def json_to_message(json_msg):
@@ -134,6 +138,7 @@ def json_to_message(json_msg):
 
         # print(f"Initial Message : {vlcb_frame}")
         for field, values in json_msg.items():
+            if field == 'status': continue
             field_details = opcode_details[field]
             # print(f'Field Details : {field} : {values} -- {field_details}')
             type = field_details[0]
@@ -146,14 +151,14 @@ def json_to_message(json_msg):
                     vlcb_frame = replacer(vlcb_frame, pad(json_msg[field], length) , start, length)
                 else:
                     flag_value = 0
-                    print(f'bit_array {field} {values} -- {field_details}')
+                    # print(f'bit_array {field} {values} -- {field_details}')
                     for key, value in enumerate(field_details[3]):
-                        print(f'bit_array_value :: {key} : {value} {values[value]}')
+                        # print(f'bit_array_value :: {key} : {value} {values[value]}')
                         if values[value]:
-                            print(f'True Value')
+                            # print(f'True Value')
                             flag_value = set_bit(flag_value, key)
                             vlcb_frame = replacer(vlcb_frame, pad(flag_value, length), start, length)
-                    print(f'True Value : {pad(flag_value, length)}')
+                    # print(f'True Value : {pad(flag_value, length)}')
             elif type in ('str-out', 'str-json'):
                 # print(f'Field not required : {field} : {values} -- {field_details}')
                 pass
@@ -166,7 +171,7 @@ def json_to_message(json_msg):
 def display_opcode_details(op_code):
     print(f'Required Fields for op_code: {op_code}')
     for field, values in opcodes_toml[op_code].items():
-        if values[0] in ['str', 'int']:
+        if values[0] in ['str', 'int', 'bit-array']:
             print(f"Required Fields: {field} : {values}")
 
 
