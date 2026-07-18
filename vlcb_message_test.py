@@ -9,9 +9,9 @@ def process_message(msg):
     cbus_message = message_to_json(msg)
     grid_connect_string = json_to_message(cbus_message)
     if grid_connect_string[6:] == msg[6:]:
-        print(f'{cbus_message['status']} :: {msg} - {cbus_message['description']}- {grid_connect_string}')
+        print(f'{cbus_message['status']} :: {msg} - {cbus_message['description']} - {grid_connect_string} {cbus_message}')
     else:
-        print(f'ERROR :: {msg} -- {grid_connect_string} :: {cbus_message['op_code']} -- {cbus_message['description']}')
+        print(f'ERROR - process_message :: {msg} -- {grid_connect_string} :: {cbus_message['op_code']} -- {cbus_message}')
 
 async def main(name: str) -> None:
     cbus_header = ':SB060N'
